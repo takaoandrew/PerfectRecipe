@@ -1,0 +1,20 @@
+language: android
+jdk: oraclejdk8
+
+android:
+  components:
+  - tools
+  - platform-tools
+  - build-tools-26.0.2
+  - android-26
+  - extra-android-m2repository
+
+before_install:
+  - openssl aes-256-cbc -d -k $SECRET_FILES_KEY -in release.jks.enc -out release.jks
+  - openssl aes-256-cbc -d -k $SECRET_FILES_KEY -in keys.json.enc -out keys.json
+
+script:
+  - ./gradlew clean build assembleRelease
+
+after_success:
+  - ./gradlew publishApkRelease
