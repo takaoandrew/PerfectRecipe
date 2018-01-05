@@ -7,11 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
@@ -22,10 +20,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.R;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.databinding.ActivityMainBinding;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.ExampleAdapter;
-import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.WordModel;
+import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.WeekModel;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,10 +35,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SortedListAdapter.Callback {
 
-    private static final Comparator<WordModel> COMPARATOR = new SortedListAdapter.ComparatorBuilder<WordModel>()
-            .setOrderForModel(WordModel.class, new Comparator<WordModel>() {
+    private static final Comparator<WeekModel> COMPARATOR = new SortedListAdapter.ComparatorBuilder<WeekModel>()
+            .setOrderForModel(WeekModel.class, new Comparator<WeekModel>() {
                 @Override
-                public int compare(WordModel a, WordModel b) {
+                public int compare(WeekModel a, WeekModel b) {
                     return Integer.signum(a.getRank() - b.getRank());
                 }
             })
@@ -52,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ActivityMainBinding mBinding;
     private Animator mAnimator;
 
-    private List<WordModel> mModels;
+    private List<WeekModel> mModels;
 
 //START
 //__________________________________________________________________________________________________
@@ -73,11 +69,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mDatabaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                getAllTask(dataSnapshot);
+                getAllWeeks(dataSnapshot);
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                getAllTask(dataSnapshot);
+                getAllWeeks(dataSnapshot);
             }
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -98,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         mAdapter = new ExampleAdapter(this, COMPARATOR, new ExampleAdapter.Listener() {
             @Override
-            public void onExampleModelClicked(WordModel model) {
+            public void onExampleModelClicked(WeekModel model) {
                 Context context = MainActivity.this;
                 Class destinationClass = DetailActivity.class;
                 Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-                intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, model.getTaskName());
+                intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, model.getWeekTitle());
                 startActivity(intentToStartDetailActivity);
             }
         });
@@ -117,20 +113,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 //__________________________________________________________________________________________________
 
-    private void getAllTask(DataSnapshot dataSnapshot){
+    private void getAllWeeks(DataSnapshot dataSnapshot){
         //waiting for all data in a single holder
-        String assignedTo;
-        String taskName;
+        String weekCost;
+        String weekTitle;
         ArrayList<String> tags;
 //        mModels.clear();
 //        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-        assignedTo = (String) dataSnapshot.child("assignedTo").getValue();
-        taskName = (String) dataSnapshot.child("taskName").getValue();
+        weekCost = (String) dataSnapshot.child("weekCost").getValue();
+        weekTitle = (String) dataSnapshot.child("weekTitle").getValue();
         tags = (ArrayList<String>) dataSnapshot.child("tags").getValue();
 //            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
 //            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
         Log.d(TAG, "the data snapshot is: " + dataSnapshot.toString());
-        mModels.add(new WordModel(taskName, tags,count+1, assignedTo));
+        mModels.add(new WeekModel(weekTitle, tags,count+1, weekCost));
         count += 1;
 //        }
         Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
@@ -169,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String query) {
-        final List<WordModel> filteredModelList = filter(mModels, query);
+        final List<WeekModel> filteredModelList = filter(mModels, query);
         mAdapter.edit()
                 .replaceAll(filteredModelList)
                 .commit();
@@ -181,14 +177,21 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return false;
     }
 
-    private static List<WordModel> filter(List<WordModel> models, String query) {
+    private static List<WeekModel> filter(List<WeekModel> models, String query) {
         final String lowerCaseQuery = query.toLowerCase();
 
-        final List<WordModel> filteredModelList = new ArrayList<>();
-        for (WordModel model : models) {
+        final List<WeekModel> filteredModelList = new ArrayList<>();
+        for (WeekModel model : models) {
             final ArrayList<String> tags = model.getTags();
-            String tagString = String.join(",", tags);
-            final String text = model.getWord().toLowerCase();
+            StringBuilder tagStringBuilder = new StringBuilder();
+            for (String string : tags) {
+                tagStringBuilder.append(string);
+                tagStringBuilder.append("\t");
+            }
+//            String tagString = String.join(",", tags);
+            String tagString = tagStringBuilder.toString();
+
+            final String text = model.getWeekCost().toLowerCase();
             final String rank = String.valueOf(model.getRank());
             if (tagString.contains(lowerCaseQuery) || text.contains(lowerCaseQuery) || rank.contains(lowerCaseQuery)) {
                 filteredModelList.add(model);

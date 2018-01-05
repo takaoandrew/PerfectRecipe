@@ -11,31 +11,31 @@ import java.util.ArrayList;
  * User: Xaver
  * Date: 24/05/15
  */
-public class WordModel implements SortedListAdapter.ViewModel {
+public class WeekModel implements SortedListAdapter.ViewModel {
 
-    private final String mTaskName;
+    private final String mWeekTitle;
     private final int mRank;
     private final ArrayList<String> mTags;
-    private final String mWord;
+    private final String mWeekCost;
 
-//    public WordModel(long id, int rank, ArrayList<String> tags, String word) {
-    public WordModel(String taskName, ArrayList<String> tags, int rank, String word) {
-        mTaskName = taskName;
+//    public WeekModel(long id, int rank, ArrayList<String> tags, String word) {
+    public WeekModel(String weekTitle, ArrayList<String> tags, int rank, String weekCost) {
+        mWeekTitle = weekTitle;
         mRank = rank;
-        mWord = word;
+        mWeekCost = weekCost;
         mTags = tags;
     }
 
-    public String getTaskName() {
-        return mTaskName;
+    public String getWeekTitle() {
+        return mWeekTitle;
     }
 
     public int getRank() {
         return mRank;
     }
 
-    public String getWord() {
-        return mWord;
+    public String getWeekCost() {
+        return mWeekCost;
     }
 
     public ArrayList<String> getTags() {
@@ -48,21 +48,21 @@ public class WordModel implements SortedListAdapter.ViewModel {
 
     @Override
     public <T> boolean isSameModelAs(@NonNull T item) {
-        if (item instanceof WordModel) {
-            final WordModel wordModel = (WordModel) item;
-            return wordModel.mTaskName == mTaskName;
+        if (item instanceof WeekModel) {
+            final WeekModel weekModel = (WeekModel) item;
+            return weekModel.mWeekTitle == mWeekTitle;
         }
         return false;
     }
 
     @Override
     public <T> boolean isContentTheSameAs(@NonNull T item) {
-        if (item instanceof WordModel) {
-            final WordModel other = (WordModel) item;
+        if (item instanceof WeekModel) {
+            final WeekModel other = (WeekModel) item;
             if (mRank != other.mRank) {
                 return false;
             }
-            return mWord != null ? mWord.equals(other.mWord) : other.mWord == null;
+            return mWeekCost != null ? mWeekCost.equals(other.mWeekCost) : other.mWeekCost == null;
         }
         return false;
     }
