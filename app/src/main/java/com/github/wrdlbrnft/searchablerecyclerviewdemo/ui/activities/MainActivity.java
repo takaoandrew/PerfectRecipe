@@ -27,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,26 +67,40 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 //        FirebaseApp.initializeApp(this);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        mDatabaseReference.addChildEventListener(new ChildEventListener() {
+        mDatabaseReference.addValueEventListener(new ValueEventListener() {
+
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 getAllWeeks(dataSnapshot);
             }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                getAllWeeks(dataSnapshot);
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                taskDeletion(dataSnapshot);
-            }
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Cancelled");
+
             }
         });
+
+//        mDatabaseReference.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                getAllWeeks(dataSnapshot);
+//            }
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                getAllWeeks(dataSnapshot);
+//            }
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+////                taskDeletion(dataSnapshot);
+//            }
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
 //__________________________________________________________________________________________________
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -113,22 +128,38 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 //__________________________________________________________________________________________________
 
+    private void printData(DataSnapshot dataSnapshot) {
+        Log.d(TAG, "the data snapshot is: " + dataSnapshot.toString());
+        long numChildren = dataSnapshot.getChildrenCount();
+        Log.d(TAG, "the number of children is : " + numChildren);
+        DataSnapshot currentSnapshot;
+//        for (int i=0; i<numChildren; i++) {
+//            currentSnapshot = dataSnapshot.getChildren();
+//            Log.d(TAG, "child number " + i + " is " + dataSnapshot.getChildren().child);
+//        }
+        for (DataSnapshot child : dataSnapshot.getChildren()) {
+            Log.d(TAG, "the child is " + child);
+
+        }
+    }
+
     private void getAllWeeks(DataSnapshot dataSnapshot){
         //waiting for all data in a single holder
         String weekCost;
         String weekTitle;
         ArrayList<String> tags;
-//        mModels.clear();
-//        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-        weekCost = (String) dataSnapshot.child("weekCost").getValue();
-        weekTitle = (String) dataSnapshot.child("weekTitle").getValue();
-        tags = (ArrayList<String>) dataSnapshot.child("tags").getValue();
+        mModels.clear();
+        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+            weekCost = (String) singleSnapshot.child("weekCost").getValue();
+            weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
+            tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
 //            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
 //            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
-        Log.d(TAG, "the data snapshot is: " + dataSnapshot.toString());
-        mModels.add(new WeekModel(weekTitle, tags,count+1, weekCost));
-        count += 1;
-//        }
+            Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
+            mModels.add(new WeekModel(weekTitle, tags,count+1, weekCost));
+            count += 1;
+        }
         Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
         mAdapter.edit()
                 .replaceAll(mModels)
