@@ -150,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ArrayList<String> tags;
         mModels.clear();
         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-
             weekCost = (String) singleSnapshot.child("weekCost").getValue();
             weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
             tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
@@ -164,8 +163,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mAdapter.edit()
                 .replaceAll(mModels)
                 .commit();
-
     }
+
 //
 //    private void taskDeletion(DataSnapshot dataSnapshot){
 //        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
