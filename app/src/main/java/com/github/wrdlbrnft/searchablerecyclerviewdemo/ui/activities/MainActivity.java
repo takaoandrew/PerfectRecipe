@@ -147,16 +147,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //waiting for all data in a single holder
         String weekCost;
         String weekTitle;
+        ArrayList<String> ingredients;
+        ArrayList<String> steps;
         ArrayList<String> tags;
         mModels.clear();
         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
             weekCost = (String) singleSnapshot.child("weekCost").getValue();
             weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
             tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
+            ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
+            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
 //            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
 //            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
             Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
-            mModels.add(new WeekModel(weekTitle, tags,count+1, weekCost));
+            mModels.add(new WeekModel(weekTitle, tags, ingredients, steps, count+1, weekCost));
             count += 1;
         }
         Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
