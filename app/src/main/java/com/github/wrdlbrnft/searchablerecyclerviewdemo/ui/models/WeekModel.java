@@ -7,32 +7,34 @@ import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import java.util.ArrayList;
 
 /**
- * Created with Android Studio
- * User: Xaver
- * Date: 24/05/15
+ * Created by andrewtakao on 1/7/18.
  */
+
 public class WeekModel implements SortedListAdapter.ViewModel {
 
     private final String mWeekTitle;
     private final int mRank;
     private final ArrayList<String> mTags;
-    private final ArrayList<String> mIngredients;
-    private final ArrayList<String> mSteps;
+//    private final ArrayList<String> mIngredients;
+//    private final ArrayList<String> mSteps;
     private final String mWeekCost;
+    private final Iterable mRecipeInformation;
 
-//    public WeekModel(long id, int rank, ArrayList<String> tags, String word) {
     public WeekModel(String weekTitle,
-                     ArrayList<String> tags,
-                     ArrayList<String> ingredients,
-                     ArrayList<String> steps,
-                     int rank,
-                     String weekCost) {
+                       ArrayList<String> tags,
+//                       ArrayList<String> ingredients,
+//                       ArrayList<String> steps,
+                       int rank,
+                       String weekCost,
+                       Iterable recipeInformation)
+    {
         mWeekTitle = weekTitle;
         mRank = rank;
         mWeekCost = weekCost;
         mTags = tags;
-        mIngredients = ingredients;
-        mSteps = steps;
+        mRecipeInformation = recipeInformation;
+//        mIngredients = ingredients;
+//        mSteps = steps;
     }
 
     public String getWeekTitle() {
@@ -47,11 +49,15 @@ public class WeekModel implements SortedListAdapter.ViewModel {
         return mWeekCost;
     }
 
+    public Iterable getRecipeInformation() {
+        return mRecipeInformation;
+    }
+
     public ArrayList<String> getTags() {
         return mTags;
     }
-    public ArrayList<String> getIngredients() { return mIngredients; }
-    public ArrayList<String> getSteps() { return mSteps; }
+//    public ArrayList<String> getIngredients() { return mIngredients; }
+//    public ArrayList<String> getSteps() { return mSteps; }
 
 //    public ArrayList<String> getTags() {
 ////        return mTags;

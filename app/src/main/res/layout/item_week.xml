@@ -5,7 +5,7 @@
 
         <variable
             name="listener"
-            type="com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.ExampleAdapter.Listener"/>
+            type="com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.WeekAdapter.Listener"/>
 
         <variable
             name="model"

@@ -19,10 +19,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.R;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.databinding.ActivityMainBinding;
-import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.ExampleAdapter;
+import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.WeekAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.WeekModel;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             })
             .build();
 
-    private ExampleAdapter mAdapter;
+    private WeekAdapter mAdapter;
     private ActivityMainBinding mBinding;
     private Animator mAnimator;
 
@@ -56,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private DatabaseReference mDatabaseReference;
     private static final String TAG = MainActivity.class.getSimpleName();
     int count = 0;
+    static final String INGREDIENTS = "ingredients";
+    static final String STEPS = "steps";
+    static final String RECIPE_INFORMATION = "recipe_information";
 //__________________________________________________________________________________________________
 
     @Override
@@ -107,13 +109,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         setSupportActionBar(mBinding.toolBar);
 
-        mAdapter = new ExampleAdapter(this, COMPARATOR, new ExampleAdapter.Listener() {
+        mAdapter = new WeekAdapter(this, COMPARATOR, new WeekAdapter.Listener() {
             @Override
             public void onExampleModelClicked(WeekModel model) {
                 Context context = MainActivity.this;
-                Class destinationClass = DetailActivity.class;
+                Class destinationClass = WeekDetailActivity.class;
                 Intent intentToStartDetailActivity = new Intent(context, destinationClass);
                 intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, model.getWeekTitle());
+//                List list = new ArrayList();
+//                model.getRecipeInformation().forEach(list::add);
+//                intentToStartDetailActivity.putParcelableArrayListExtra(RECIPE_INFORMATION, (ArrayList<? extends Parcelable>) list);
+//                intentToStartDetailActivity.putExtra(INGREDIENTS, model.getIngredients());
+//                intentToStartDetailActivity.putExtra(STEPS, model.getSteps());
                 startActivity(intentToStartDetailActivity);
             }
         });
@@ -131,12 +138,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void printData(DataSnapshot dataSnapshot) {
         Log.d(TAG, "the data snapshot is: " + dataSnapshot.toString());
         long numChildren = dataSnapshot.getChildrenCount();
-        Log.d(TAG, "the number of children is : " + numChildren);
-        DataSnapshot currentSnapshot;
-//        for (int i=0; i<numChildren; i++) {
-//            currentSnapshot = dataSnapshot.getChildren();
-//            Log.d(TAG, "child number " + i + " is " + dataSnapshot.getChildren().child);
-//        }
         for (DataSnapshot child : dataSnapshot.getChildren()) {
             Log.d(TAG, "the child is " + child);
 
@@ -154,13 +155,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
             weekCost = (String) singleSnapshot.child("weekCost").getValue();
             weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
+            Iterable recipeInformation = singleSnapshot.getChildren();
+            Log.d(TAG, "Recipe Information: " + recipeInformation);
             tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
-            ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
-            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
+//            ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
+//            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
+
 //            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
 //            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
             Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
-            mModels.add(new WeekModel(weekTitle, tags, ingredients, steps, count+1, weekCost));
+            mModels.add(new WeekModel(weekTitle, tags,
+//                    ingredients, steps,
+                    count+1,
+                    weekCost, recipeInformation));
             count += 1;
         }
         Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
@@ -218,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         for (WeekModel model : models) {
             final ArrayList<String> tags = model.getTags();
             StringBuilder tagStringBuilder = new StringBuilder();
+
             for (String string : tags) {
                 tagStringBuilder.append(string);
                 tagStringBuilder.append("\t");
