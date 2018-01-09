@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     int count = 0;
     static final String INGREDIENTS = "ingredients";
     static final String STEPS = "steps";
+    static final String WEEK_TITLE = "week_title";
     static final String RECIPE_INFORMATION = "recipe_information";
 //__________________________________________________________________________________________________
 
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 //                intentToStartDetailActivity.putParcelableArrayListExtra(RECIPE_INFORMATION, (ArrayList<? extends Parcelable>) list);
 //                intentToStartDetailActivity.putExtra(INGREDIENTS, model.getIngredients());
 //                intentToStartDetailActivity.putExtra(STEPS, model.getSteps());
+//                intentToStartDetailActivity.putExtra(WEEK_TITLE, model.getWeekTitle());
                 startActivity(intentToStartDetailActivity);
             }
         });

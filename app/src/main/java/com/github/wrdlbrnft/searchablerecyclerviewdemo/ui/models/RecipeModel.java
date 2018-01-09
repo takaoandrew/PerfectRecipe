@@ -7,10 +7,9 @@ import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import java.util.ArrayList;
 
 /**
- * Created with Android Studio
- * User: Xaver
- * Date: 24/05/15
+ * Created by andrewtakao on 1/7/18.
  */
+
 public class RecipeModel implements SortedListAdapter.ViewModel {
 
     private final String mRecipeTitle;
@@ -21,21 +20,21 @@ public class RecipeModel implements SortedListAdapter.ViewModel {
     private final String mRecipeCost;
 
 //    public RecipeModel(long id, int rank, ArrayList<String> tags, String word) {
-    public RecipeModel(String weekTitle,
+    public RecipeModel(String recipeTitle,
                        ArrayList<String> tags,
                        ArrayList<String> ingredients,
                        ArrayList<String> steps,
                        int rank,
-                       String weekCost) {
-        mRecipeTitle = weekTitle;
+                       String recipeCost) {
+        mRecipeTitle = recipeTitle;
         mRank = rank;
-        mRecipeCost = weekCost;
+        mRecipeCost = recipeCost;
         mTags = tags;
         mIngredients = ingredients;
         mSteps = steps;
     }
 
-    public String getWeekTitle() {
+    public String getRecipeTitle() {
         return mRecipeTitle;
     }
 
@@ -43,7 +42,7 @@ public class RecipeModel implements SortedListAdapter.ViewModel {
         return mRank;
     }
 
-    public String getWeekCost() {
+    public String getRecipeCost() {
         return mRecipeCost;
     }
 

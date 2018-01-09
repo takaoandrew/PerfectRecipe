@@ -12,7 +12,7 @@ import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 
 import java.util.Comparator;
 
-public class RecipeAdapter extends SortedListAdapter<RecipeModel> {
+public class RecipeAdapter extends Adapter<RecipeModel> {
 
     public interface Listener {
         void onExampleModelClicked(RecipeModel model);

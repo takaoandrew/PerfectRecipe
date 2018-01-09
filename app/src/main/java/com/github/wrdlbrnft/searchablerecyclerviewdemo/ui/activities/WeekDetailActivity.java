@@ -9,16 +9,24 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.R;
+import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.RecipeAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.WeekAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.RecipeModel;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.WeekModel;
+import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class WeekDetailActivity extends AppCompatActivity {
+
 
     private static final String TAG = WeekDetailActivity.class.getSimpleName();
     private TextView mTaskNameDisplay;
@@ -28,6 +36,9 @@ public class WeekDetailActivity extends AppCompatActivity {
     int count = 0;
     private Toolbar mToolbar;
     private Iterable mRecipeInformation;
+    private RecipeAdapter mRecipeAdapter;
+//    private final String RECIPE_TITLE = "recipe_title";
+    private DatabaseReference mDatabaseReference;
 
 
     private List<RecipeModel> mModels;
@@ -35,6 +46,25 @@ public class WeekDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mModels = new ArrayList<>();
+
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        mDatabaseReference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                getAllRecipes(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "Cancelled");
+
+            }
+        });
+
         setContentView(R.layout.activity_week_detail);
         mTaskNameDisplay = (TextView) findViewById(R.id.tv_week_title);
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -57,6 +87,16 @@ public class WeekDetailActivity extends AppCompatActivity {
 //            mTaskNameDisplay.append("\n"+step);
 //        }
 
+        mRecipeAdapter = new RecipeAdapter(this, null, new RecipeAdapter.Listener() {
+            @Override
+            public void onExampleModelClicked(RecipeModel model) {
+                Context context = WeekDetailActivity.this;
+                Class destinationClass = RecipeDetailActivity.class;
+                Intent intentToStartActivity = new Intent(context, destinationClass);
+//                intentToStartActivity.putExtra(RECIPE_TITLE, model.getRecipeTitle());
+            }
+        });
+
 
 //        mAdapter = new WeekAdapter(this, COMPARATOR, new WeekAdapter.Listener() {
 //            @Override
@@ -77,36 +117,36 @@ public class WeekDetailActivity extends AppCompatActivity {
     }
 
 
-//    private void getAllWeeks(DataSnapshot dataSnapshot){
-//        //waiting for all data in a single holder
-//        String weekCost;
-//        String weekTitle;
-//        ArrayList<String> ingredients;
-//        ArrayList<String> steps;
-//        ArrayList<String> tags;
-//        mModels.clear();
-//        for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-//            weekCost = (String) singleSnapshot.child("weekCost").getValue();
-//            weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
-//            Iterable recipeInformation = singleSnapshot.getChildren();
-//            Log.d(TAG, "Recipe Information: " + recipeInformation);
-//            tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
-//            ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
-//            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
-//
-////            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
-////            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
-//            Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
-//            mModels.add(new RecipeModel(weekTitle, tags,
-//                    ingredients, steps,
-//                    count+1,
-//                    weekCost, recipeInformation));
-//            count += 1;
-//        }
-//        Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
-//        mAdapter.edit()
-//                .replaceAll(mModels)
-//                .commit();
-//    }
+    private void getAllRecipes(DataSnapshot dataSnapshot){
+        //waiting for all data in a single holder
+        String recipeCost;
+        String recipeTitle;
+        ArrayList<String> ingredients;
+        ArrayList<String> steps;
+        ArrayList<String> tags;
+        mModels.clear();
+        for (DataSnapshot singleSnapshot : dataSnapshot.child(mWeekTitle).getChildren()) {
+            recipeCost = (String) singleSnapshot.child("recipeCost").getValue();
+            recipeTitle = (String) singleSnapshot.child("recipeTitle").getValue();
+            Iterable recipeInformation = singleSnapshot.getChildren();
+            Log.d(TAG, "Recipe Information: " + recipeInformation);
+            tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
+            ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
+            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
+
+//            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
+//            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
+            Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
+            mModels.add(new RecipeModel(recipeTitle, tags,
+                    ingredients, steps,
+                    count+1,
+                    recipeCost));
+            count += 1;
+        }
+        Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
+        mRecipeAdapter.edit()
+                .replaceAll(mModels)
+                .commit();
+    }
 }
 

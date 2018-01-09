@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="@{model.getWeekTitle()}"
+            android:text="@{model.getRecipeTitle()}"
             android:textColor="@android:color/black"
             android:textSize="22sp"/>
 
@@ -36,7 +36,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:textSize="16sp"
-            android:text="@{model.getWeekCost}"/>
+            android:text="@{model.getRecipeCost}"/>
 
 
 
