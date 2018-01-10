@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private WeekAdapter mAdapter;
     private ActivityMainBinding mBinding;
     private Animator mAnimator;
-
     private List<WeekModel> mModels;
 
 //START
@@ -107,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 //__________________________________________________________________________________________________
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
         setSupportActionBar(mBinding.toolBar);
 
         mAdapter = new WeekAdapter(this, COMPARATOR, new WeekAdapter.Listener() {
