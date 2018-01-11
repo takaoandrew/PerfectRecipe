@@ -6,12 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.R;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.databinding.ActivityRecipeDetailBinding;
-import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.RecipeDetailAdapter;
+import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.IngredientAdapter;
+import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.StepAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,10 +25,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private String mRecipeTitle;
     private String mWeekTitle;
     private DatabaseReference mDatabaseReference;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter mIngredientAdapter;
+    private RecyclerView.Adapter mStepAdapter;
     private static final String TAG = RecipeDetailActivity.class.getSimpleName();
     private ActivityRecipeDetailBinding mBinding;
     private ArrayList<String> mIngredientsList;
+    private ArrayList<String> mStepsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +56,16 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
 
         mIngredientsList = new ArrayList<>();
-        mAdapter = new RecipeDetailAdapter(mIngredientsList);
+        mStepsList = new ArrayList<>();
+//        mIngredientAdapter = new IngredientAdapter(mIngredientsList);
+//        mStepAdapter = new StepAdapter(mStepsList);
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_recipe_detail);
-        mBinding.recipeDetailRecyclerview.setAdapter(mAdapter);
-        mBinding.recipeDetailRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+
+//        mBinding.recipeStepsRecyclerview.setAdapter(mIngredientAdapter);
+//        mBinding.recipeStepsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.recipeIngredientsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.recipeStepsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         mBinding.toolBar.setTitle(mRecipeTitle);
     }
 
@@ -76,10 +83,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
         ingredients = (ArrayList<String>) recipeSnapshot.child("ingredients").getValue();
         Log.d(TAG, "the ingredients are " + ingredients);
         steps = (ArrayList<String>) recipeSnapshot.child("steps").getValue();
+
         mIngredientsList = ingredients;
-        mAdapter = new RecipeDetailAdapter(mIngredientsList);
-        mBinding.recipeDetailRecyclerview.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+        mStepsList = steps;
+        mIngredientAdapter = new IngredientAdapter(mIngredientsList);
+        mStepAdapter = new StepAdapter(mStepsList);
+        mBinding.recipeIngredientsRecyclerview.setAdapter(mIngredientAdapter);
+        mBinding.recipeStepsRecyclerview.setAdapter(mStepAdapter);
+        mIngredientAdapter.notifyDataSetChanged();
 //        for (String ingredient: ingredients) {
 //            Log.d(TAG, "The recipe ingredients are " + ingredient);
 //        }
