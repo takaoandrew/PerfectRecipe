@@ -58,19 +58,22 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
     private static final String TAG = WeekDetailActivity.class.getSimpleName();
     int count = 0;
 
-    private TextView mTaskNameDisplay;
     private String mWeekTitle;
 //    private ArrayList<String> mIngredients;
 //    private ArrayList<String> mSteps;
     private Toolbar mToolbar;
-    private Iterable mRecipeInformation;
-//    private final String RECIPE_TITLE = "recipe_title";
+
+    static final String EXTRA_RECIPE_TITLE = "recipe_title";
+    static final String EXTRA_WEEK_TITLE = "week_title";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mModels = new ArrayList<>();
+
+        Intent intent = getIntent();
+        mWeekTitle = intent.getStringExtra(Intent.EXTRA_TEXT);
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
@@ -97,14 +100,9 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
                 Context context = WeekDetailActivity.this;
                 Class destinationClass = RecipeDetailActivity.class;
                 Intent intentToStartActivity = new Intent(context, destinationClass);
-//                intentToStartActivity.putExtra(RECIPE_TITLE, model.getRecipeTitle());
-                intentToStartActivity.putExtra(Intent.EXTRA_TEXT, model.getRecipeTitle());
-//                List list = new ArrayList();
-//                model.getRecipeInformation().forEach(list::add);
-//                intentToStartDetailActivity.putParcelableArrayListExtra(RECIPE_INFORMATION, (ArrayList<? extends Parcelable>) list);
-//                intentToStartDetailActivity.putExtra(INGREDIENTS, model.getIngredients());
-//                intentToStartDetailActivity.putExtra(STEPS, model.getSteps());
-//                intentToStartDetailActivity.putExtra(WEEK_TITLE, model.getWeekTitle());
+                intentToStartActivity.putExtra(EXTRA_RECIPE_TITLE, model.getRecipeTitle());
+                intentToStartActivity.putExtra(EXTRA_WEEK_TITLE, mWeekTitle);
+
                 startActivity(intentToStartActivity);
             }
         });
@@ -116,9 +114,6 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
 //        setContentView(R.layout.activity_week_detail);
 //        mTaskNameDisplay = (TextView) findViewById(R.id.tv_week_title);
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-
-        Intent intent = getIntent();
-        mWeekTitle = intent.getStringExtra(Intent.EXTRA_TEXT);
 //        mRecipeInformation = intent.getParcelableArrayListExtra(MainActivity.RECIPE_INFORMATION);
 //        for (Object string: mRecipeInformation) {
 //            Log.d("JKJK", "Hi " + string);
@@ -181,7 +176,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
 
 
 //            Log.d(TAG, "the week title is: " + singleSnapshot.child("recipeTitle").getValue());
-            Log.d(TAG, "the recipe title is: " + singleSnapshot.child("recipeTitle").getValue());
+//            Log.d(TAG, "the recipe title is: " + singleSnapshot.child("recipeTitle").getValue());
 //            Log.d(TAG, "the type is " + weekSnapshot.child("tags").getValue().getClass());
 //            Log.d(TAG, "the data snapshot is: " + weekSnapshot.toString());
             mModels.add(new RecipeModel(recipeTitle, tags,

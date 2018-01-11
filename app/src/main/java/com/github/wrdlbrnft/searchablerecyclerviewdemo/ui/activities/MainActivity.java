@@ -136,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 //__________________________________________________________________________________________________
 
     private void printData(DataSnapshot dataSnapshot) {
-        Log.d(TAG, "the data snapshot is: " + dataSnapshot.toString());
+//        Log.d(TAG, "the data snapshot is: " + dataSnapshot.toString());
         long numChildren = dataSnapshot.getChildrenCount();
         for (DataSnapshot child : dataSnapshot.getChildren()) {
-            Log.d(TAG, "the child is " + child);
+//            Log.d(TAG, "the child is " + child);
 
         }
     }
@@ -156,14 +156,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             weekCost = (String) singleSnapshot.child("weekCost").getValue();
             weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
             Iterable recipeInformation = singleSnapshot.getChildren();
-            Log.d(TAG, "Recipe Information: " + recipeInformation);
+//            Log.d(TAG, "Recipe Information: " + recipeInformation);
             tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
 //            ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
 //            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
 
 //            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
 //            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
-            Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
+//            Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
             mModels.add(new WeekModel(weekTitle, tags,
 //                    ingredients, steps,
                     count+1,
