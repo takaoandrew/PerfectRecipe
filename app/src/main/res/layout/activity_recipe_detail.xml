@@ -39,11 +39,13 @@
                         android:layout_marginTop="?attr/actionBarSize"
                         android:paddingEnd="16dp"
                         android:paddingRight="16dp"
+                        android:paddingBottom="16dp"
                         android:minHeight="?attr/actionBarSize"
                         android:background="@color/primary"
                         android:id="@+id/recipe_ingredients_recyclerview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+
                         />
                 </ScrollView>
 
@@ -53,6 +55,7 @@
                     android:layout_gravity="left"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/primary">
+
 
                 </android.support.v7.widget.Toolbar>
 

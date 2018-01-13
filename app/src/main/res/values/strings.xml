@@ -3,4 +3,11 @@
     <string name="title">Lowcost Kitchen</string>
     <string name="action_search">Search</string>
     <string name="model_clicked_pattern">You clicked on the rank %1$d word: %2$s!</string>
+    <string name="about">About</string>
+    <string name="about_description">Lowcost kitchen is a selection of recipes for a week\'s worth of meals.
+    It is designed to help you save money, and to prevent food waste. You are provided with a list of ingredients
+    to buy that will last you one week, that are readily available in most grocery stores. By the end of the week,
+    if you follow the recipes for each day, you will have an empty refrigerator and will have spent under 30
+    dollars for all of your food for the week. To put that into perspective, only 8% of Americans spend less than 50 dollars a week.
+    </string>
 </resources>
