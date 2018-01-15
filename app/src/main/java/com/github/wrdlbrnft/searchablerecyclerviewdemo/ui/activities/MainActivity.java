@@ -158,14 +158,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Iterable recipeInformation = singleSnapshot.getChildren();
 //            Log.d(TAG, "Recipe Information: " + recipeInformation);
             tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
-//            ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
+            ingredients = (ArrayList<String>) singleSnapshot.child("weekIngredients").getValue();
 //            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
 
 //            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
 //            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
 //            Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
             mModels.add(new WeekModel(weekTitle, tags,
-//                    ingredients, steps,
+                    ingredients,
+// steps,
                     count+1,
                     weekCost, recipeInformation));
             count += 1;
