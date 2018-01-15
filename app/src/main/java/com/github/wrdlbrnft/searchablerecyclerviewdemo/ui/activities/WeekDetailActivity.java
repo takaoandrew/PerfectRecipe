@@ -10,6 +10,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.R;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.databinding.ActivityWeekDetailBinding;
+import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.IngredientAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.RecipeAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.WeekAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.RecipeModel;
@@ -53,6 +55,10 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
     private ActivityWeekDetailBinding mBinding;
     private Animator mAnimator;
     private List<RecipeModel> mModels;
+
+
+    private RecyclerView.Adapter mIngredientAdapter;
+    private ArrayList<String> mIngredientsList;
 
     private DatabaseReference mDatabaseReference;
     private static final String TAG = WeekDetailActivity.class.getSimpleName();
@@ -111,16 +117,21 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         mBinding.recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.recipeRecyclerView.setAdapter(mRecipeAdapter);
 
+        mBinding.weekIngredientsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
+        mBinding.toolBar.setTitle(mWeekTitle);
+
 //        setContentView(R.layout.activity_week_detail);
 //        mTaskNameDisplay = (TextView) findViewById(R.id.tv_week_title);
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+//        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
 //        mRecipeInformation = intent.getParcelableArrayListExtra(MainActivity.RECIPE_INFORMATION);
 //        for (Object string: mRecipeInformation) {
 //            Log.d("JKJK", "Hi " + string);
 //        }
 //        mIngredients = intent.getStringArrayListExtra(MainActivity.INGREDIENTS);
 //        mSteps = intent.getStringArrayListExtra(MainActivity.STEPS);
-        mToolbar.setTitle(mWeekTitle);
+//        mToolbar.setTitle(mWeekTitle);
+        Log.d(TAG, "Title = " + mWeekTitle);
 //        mTaskNameDisplay.append("Ingredients:\n");
 //        for (String ingredient : mIngredients) {
 //            mTaskNameDisplay.append(ingredient+"\n");
@@ -159,6 +170,8 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         ArrayList<String> ingredients;
         ArrayList<String> steps;
         ArrayList<String> tags;
+
+        ArrayList<String> weekIngredients;
         mModels.clear();
         DataSnapshot weekSnapshot = dataSnapshot.child(mWeekTitle);
         DataSnapshot recipeSnapshot = weekSnapshot.child("recipes");
@@ -175,6 +188,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
 
 
 
+
 //            Log.d(TAG, "the week title is: " + singleSnapshot.child("recipeTitle").getValue());
 //            Log.d(TAG, "the recipe title is: " + singleSnapshot.child("recipeTitle").getValue());
 //            Log.d(TAG, "the type is " + weekSnapshot.child("tags").getValue().getClass());
@@ -186,6 +200,13 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
             count += 1;
 
         }
+
+
+        weekIngredients = (ArrayList<String>) weekSnapshot.child("weekIngredients").getValue();
+        mIngredientsList = weekIngredients;
+        mIngredientAdapter = new IngredientAdapter(mIngredientsList);
+
+        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
 //        Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
         mRecipeAdapter.edit()
                     .replaceAll(mModels)

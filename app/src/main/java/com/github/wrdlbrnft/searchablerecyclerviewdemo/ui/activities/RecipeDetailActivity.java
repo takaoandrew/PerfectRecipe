@@ -35,10 +35,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+//
         Intent intent = getIntent();
         mRecipeTitle = intent.getStringExtra(WeekDetailActivity.EXTRA_RECIPE_TITLE);
         mWeekTitle = intent.getStringExtra(WeekDetailActivity.EXTRA_WEEK_TITLE);
+
+        //For launching immediately
+//        mRecipeTitle = "Long Recipe";
+//        mWeekTitle = "Week 2";
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mDatabaseReference.addValueEventListener(new ValueEventListener() {

@@ -15,14 +15,14 @@ public class WeekModel implements SortedListAdapter.ViewModel {
     private final String mWeekTitle;
     private final int mRank;
     private final ArrayList<String> mTags;
-//    private final ArrayList<String> mIngredients;
+    private final ArrayList<String> mIngredients;
 //    private final ArrayList<String> mSteps;
     private final String mWeekCost;
     private final Iterable mRecipeInformation;
 
     public WeekModel(String weekTitle,
                        ArrayList<String> tags,
-//                       ArrayList<String> ingredients,
+                       ArrayList<String> ingredients,
 //                       ArrayList<String> steps,
                        int rank,
                        String weekCost,
@@ -33,7 +33,7 @@ public class WeekModel implements SortedListAdapter.ViewModel {
         mWeekCost = weekCost;
         mTags = tags;
         mRecipeInformation = recipeInformation;
-//        mIngredients = ingredients;
+        mIngredients = ingredients;
 //        mSteps = steps;
     }
 
@@ -56,7 +56,7 @@ public class WeekModel implements SortedListAdapter.ViewModel {
     public ArrayList<String> getTags() {
         return mTags;
     }
-//    public ArrayList<String> getIngredients() { return mIngredients; }
+    public ArrayList<String> getIngredients() { return mIngredients; }
 //    public ArrayList<String> getSteps() { return mSteps; }
 
 //    public ArrayList<String> getTags() {
