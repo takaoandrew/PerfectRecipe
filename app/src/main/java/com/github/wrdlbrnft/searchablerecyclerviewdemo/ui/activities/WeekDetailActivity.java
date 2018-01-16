@@ -187,6 +187,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
             ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
             steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
 
+
 //            Log.d(TAG, "the week title is: " + singleSnapshot.child("recipeTitle").getValue());
 //            Log.d(TAG, "the recipe title is: " + singleSnapshot.child("recipeTitle").getValue());
 //            Log.d(TAG, "the type is " + weekSnapshot.child("tags").getValue().getClass());
@@ -216,6 +217,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
             }
         });
 
+        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
 //        Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
         mRecipeAdapter.edit()
                     .replaceAll(mModels)
