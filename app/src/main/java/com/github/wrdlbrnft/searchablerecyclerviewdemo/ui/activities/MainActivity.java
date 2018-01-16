@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (item.getItemId()==R.id.action_about) {
             Intent aboutIntent = new Intent(this, AboutActivity.class);
             startActivity(aboutIntent);
+            overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
@@ -185,10 +187,6 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
             ingredients = (ArrayList<String>) singleSnapshot.child("ingredients").getValue();
             steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
 
-
-
-
-
 //            Log.d(TAG, "the week title is: " + singleSnapshot.child("recipeTitle").getValue());
 //            Log.d(TAG, "the recipe title is: " + singleSnapshot.child("recipeTitle").getValue());
 //            Log.d(TAG, "the type is " + weekSnapshot.child("tags").getValue().getClass());
@@ -206,7 +204,18 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         mIngredientsList = weekIngredients;
         mIngredientAdapter = new IngredientAdapter(mIngredientsList);
 
+
         mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
+        mBinding.weekIngredientsRecyclerview.setOnFlingListener(new RecyclerView.OnFlingListener() {
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+                Intent aboutIntent = new Intent(WeekDetailActivity.this, AboutActivity.class);
+                startActivity(aboutIntent);
+                overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom);
+                return false;
+            }
+        });
+
 //        Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
         mRecipeAdapter.edit()
                     .replaceAll(mModels)
