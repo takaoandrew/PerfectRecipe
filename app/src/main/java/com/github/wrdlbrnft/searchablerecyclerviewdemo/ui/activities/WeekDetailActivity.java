@@ -6,8 +6,8 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Point;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,20 +15,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.R;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.databinding.ActivityWeekDetailBinding;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.IngredientAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.RecipeAdapter;
-import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.WeekAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.RecipeModel;
-import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.WeekModel;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,9 +38,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
+import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 public class WeekDetailActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SortedListAdapter.Callback
 {
@@ -58,6 +60,12 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
     private Animator mAnimator;
     private List<RecipeModel> mModels;
 
+    private int mActivePointerId = INVALID_POINTER_ID;
+
+    private float y1, y2;
+    private float mLastTouchX, mLastTouchY, mPosX, originalY;
+    static final int MIN_DISTANCE = 150;
+    private int mOriginalTextViewHeight;
 
     private RecyclerView.Adapter mIngredientAdapter;
     private ArrayList<String> mIngredientsList;
@@ -67,9 +75,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
     int count = 0;
 
     private String mWeekTitle;
-//    private ArrayList<String> mIngredients;
-//    private ArrayList<String> mSteps;
-    private Toolbar mToolbar;
+    private int mScreenHeight;
 
     static final String EXTRA_RECIPE_TITLE = "recipe_title";
     static final String EXTRA_WEEK_TITLE = "week_title";
@@ -77,6 +83,10 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        mScreenHeight = size.y;
 
         mModels = new ArrayList<>();
 
@@ -119,51 +129,63 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         mBinding.recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.recipeRecyclerView.setAdapter(mRecipeAdapter);
 
-        mBinding.weekIngredientsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
-        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
+        mOriginalTextViewHeight = mBinding.tvStartShopping.getHeight();
+
+//        mBinding.weekIngredientsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+//        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
         mBinding.toolBar.setTitle(mWeekTitle);
-
-//        setContentView(R.layout.activity_week_detail);
-//        mTaskNameDisplay = (TextView) findViewById(R.id.tv_week_title);
-//        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-//        mRecipeInformation = intent.getParcelableArrayListExtra(MainActivity.RECIPE_INFORMATION);
-//        for (Object string: mRecipeInformation) {
-//            Log.d("JKJK", "Hi " + string);
-//        }
-//        mIngredients = intent.getStringArrayListExtra(MainActivity.INGREDIENTS);
-//        mSteps = intent.getStringArrayListExtra(MainActivity.STEPS);
-//        mToolbar.setTitle(mWeekTitle);
-        Log.d(TAG, "Title = " + mWeekTitle);
-//        mTaskNameDisplay.append("Ingredients:\n");
-//        for (String ingredient : mIngredients) {
-//            mTaskNameDisplay.append(ingredient+"\n");
-//        }
-//        mTaskNameDisplay.append("Steps: ");
-//        for (String step : mSteps) {
-//            mTaskNameDisplay.append("\n"+step);
-//        }
-
-
-
-
-//        mAdapter = new WeekAdapter(this, COMPARATOR, new WeekAdapter.Listener() {
-//            @Override
-//            public void onExampleModelClicked(WeekModel model) {
-//                Context context = MainActivity.this;
-//                Class destinationClass = WeekDetailActivity.class;
-//                Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-//                intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, model.getWeekTitle());
-////                List list = new ArrayList();
-////                model.getRecipeInformation().forEach(list::add);
-////                intentToStartDetailActivity.putParcelableArrayListExtra(RECIPE_INFORMATION, (ArrayList<? extends Parcelable>) list);
-////                intentToStartDetailActivity.putExtra(INGREDIENTS, model.getIngredients());
-////                intentToStartDetailActivity.putExtra(STEPS, model.getSteps());
-//                startActivity(intentToStartDetailActivity);
-//            }
-//        });
-
     }
 
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        // Let the ScaleGestureDetector inspect all events.
+//        mScaleDetector.onTouchEvent(ev);
+        int currentHeight;
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                y1 = ev.getY();
+                originalY = ev.getY();
+                break;
+            }
+
+            case MotionEvent.ACTION_MOVE: {
+//                Log.d(TAG, "moving");
+                if (Math.abs(ev.getY()-y1) > 1) {
+                    y1 = ev.getY();
+                    mBinding.tvStartShopping.setHeight((int)(y1- originalY +mOriginalTextViewHeight));
+                    currentHeight = mBinding.tvStartShopping.getHeight();
+                    Log.d(TAG, "current height: " + currentHeight);
+//                    mBinding.tvStartShopping.setHeight()
+                    Log.d(TAG, "y1: " + y1);
+                }
+//                mBinding.tvStartShopping.setHeight((int)(mBinding.tvStartShopping.getHeight()+ev.getY()-y1));
+//                y1 = ev.getY();
+                break;
+            }
+
+            case MotionEvent.ACTION_UP: {
+                y2 = ev.getY();
+                if (y2-originalY > 1200) {
+                    Log.d(TAG, "New activity");
+                    mBinding.tvStartShopping.setHeight(mScreenHeight);
+                }
+                else {
+                    mBinding.tvStartShopping.setHeight(mOriginalTextViewHeight);
+                }
+                Log.d(TAG, "Diff is " + (y2-y1));
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
+            }
+
+            case MotionEvent.ACTION_CANCEL: {
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
+            }
+        }
+        return true;
+    }
 
     private void getAllRecipes(DataSnapshot dataSnapshot){
         //waiting for all data in a single holder
@@ -206,18 +228,18 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         mIngredientAdapter = new IngredientAdapter(mIngredientsList);
 
 
-        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
-        mBinding.weekIngredientsRecyclerview.setOnFlingListener(new RecyclerView.OnFlingListener() {
-            @Override
-            public boolean onFling(int velocityX, int velocityY) {
-                Intent aboutIntent = new Intent(WeekDetailActivity.this, AboutActivity.class);
-                startActivity(aboutIntent);
-                overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom);
-                return false;
-            }
-        });
-
-        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
+//        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
+//        mBinding.weekIngredientsRecyclerview.setOnFlingListener(new RecyclerView.OnFlingListener() {
+//            @Override
+//            public boolean onFling(int velocityX, int velocityY) {
+//                Intent aboutIntent = new Intent(WeekDetailActivity.this, AboutActivity.class);
+//                startActivity(aboutIntent);
+//                overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom);
+//                return false;
+//            }
+//        });
+//
+//        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
 //        Log.d(TAG, "mModels is: " + Arrays.toString(mModels.toArray()));
         mRecipeAdapter.edit()
                     .replaceAll(mModels)
