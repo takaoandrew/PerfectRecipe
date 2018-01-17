@@ -20,8 +20,10 @@
             android:paddingBottom="8dp"
             android:minHeight="?attr/actionBarSize"
             android:background="@android:color/holo_blue_light"
+            android:textAppearance="@style/ScrollToShop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center|bottom"
             android:text="@string/go_to_shopping_activity"
 
             />
