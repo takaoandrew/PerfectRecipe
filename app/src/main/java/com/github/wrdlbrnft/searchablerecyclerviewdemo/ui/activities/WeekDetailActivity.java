@@ -33,6 +33,7 @@ import com.github.wrdlbrnft.searchablerecyclerviewdemo.databinding.ActivityWeekD
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.IngredientAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.adapter.RecipeAdapter;
 import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.models.RecipeModel;
+import com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.utilities.ColorUtil;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -66,6 +67,8 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
 
     private float y1, y2, originalY;
     private int mOriginalTextViewHeight;
+    private String mOriginalTextColor = "#ffffffff";
+    private final float mFullSwipeRatio = (float).75;
 
     private RecyclerView.Adapter mIngredientAdapter;
     private ArrayList<String> mIngredientsList;
@@ -149,6 +152,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
     protected void onStart() {
         //From changes to drag
         mBinding.tvStartShopping.setHeight(mOriginalTextViewHeight);
+        mBinding.tvStartShopping.setTextColor(Color.parseColor(mOriginalTextColor));
         super.onStart();
     }
 
@@ -157,6 +161,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         // Let the ScaleGestureDetector inspect all events.
         int currentHeight;
         int color;
+        String transparency;
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN: {
@@ -173,9 +178,21 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
                     Log.d(TAG, "current height: " + currentHeight);
 //                    mBinding.tvStartShopping.setHeight()
                     Log.d(TAG, "y1: " + y1);
-                    Integer.toHexString((int)((y1-originalY)/(mScreenHeight-originalY)));
-//                    color = Color.parseColor("#"++"FFFFFF");
-//                    mBinding.tvStartShopping.setTextColor(color);
+                    //Make sure we have a valid color
+//                    if (y1 > originalY && y1 < mScreenHeight*mFullSwipeRatio) {
+//                        transparency = Integer.toHexString((int)(256-255*(y1-originalY)/(mScreenHeight*mFullSwipeRatio-originalY)));
+//                        if (transparency.length() == 1) {
+//                            transparency = "0"+transparency;
+//                        }
+//                        Log.d(TAG, "transparency = " + transparency);
+//                        color = Color.parseColor("#"+transparency+"FFFFFF");
+//                        mBinding.tvStartShopping.setTextColor(color);
+//                    }
+                    if (y1 > originalY && y1 < mScreenHeight*mFullSwipeRatio) {
+                        color = ColorUtil.getTransparentColorFromPosition(y1-originalY, mScreenHeight*mFullSwipeRatio-originalY);
+                        mBinding.tvStartShopping.setTextColor(color);
+                    }
+
                 }
 //                mBinding.tvStartShopping.setHeight((int)(mBinding.tvStartShopping.getHeight()+ev.getY()-y1));
 //                y1 = ev.getY();
@@ -184,12 +201,13 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
 
             case MotionEvent.ACTION_UP: {
                 y2 = ev.getY();
-                if (y2-originalY > 1200) {
+                if (y2-originalY > (double) mScreenHeight*mFullSwipeRatio-mOriginalTextViewHeight) {
                     Log.d(TAG, "New activity");
                     Intent shoppingIntent = new Intent(this, ShoppingActivity.class);
                     shoppingIntent.putExtra(Intent.EXTRA_TEXT, mWeekTitle);
                     startActivity(shoppingIntent);
                     mBinding.tvStartShopping.setHeight(mScreenHeight);
+                    mBinding.tvStartShopping.setTextColor(mScreenHeight);
                 }
                 else {
 //                    mBinding.tvStartShopping.setHeight(mOriginalTextViewHeight);
@@ -200,7 +218,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
                         public void onAnimationUpdate(ValueAnimator valueAnimator) {
                             int animatedValue = (int) valueAnimator.getAnimatedValue();
                             mBinding.tvStartShopping.setHeight(animatedValue);
-//                            mBinding.tvStartShopping.requestLayout();
+                            mBinding.tvStartShopping.setTextColor(ColorUtil.getTransparentColorFromPosition(animatedValue,mScreenHeight-mOriginalTextViewHeight));
                         }
                     });
                     anim.setDuration(1000);
