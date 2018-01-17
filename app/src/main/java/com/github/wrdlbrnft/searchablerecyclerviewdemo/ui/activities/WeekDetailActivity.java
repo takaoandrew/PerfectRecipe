@@ -3,9 +3,11 @@ package com.github.wrdlbrnft.searchablerecyclerviewdemo.ui.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,7 +48,6 @@ import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 public class WeekDetailActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SortedListAdapter.Callback
 {
-
     private static final Comparator<RecipeModel> COMPARATOR = new SortedListAdapter.ComparatorBuilder<RecipeModel>()
             .setOrderForModel(RecipeModel.class, new Comparator<RecipeModel>() {
                 @Override
@@ -62,9 +64,7 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
 
     private int mActivePointerId = INVALID_POINTER_ID;
 
-    private float y1, y2;
-    private float mLastTouchX, mLastTouchY, mPosX, originalY;
-    static final int MIN_DISTANCE = 150;
+    private float y1, y2, originalY;
     private int mOriginalTextViewHeight;
 
     private RecyclerView.Adapter mIngredientAdapter;
@@ -83,10 +83,13 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Get screen height
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         mScreenHeight = size.y;
+
 
         mModels = new ArrayList<>();
 
@@ -129,19 +132,31 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         mBinding.recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mBinding.recipeRecyclerView.setAdapter(mRecipeAdapter);
 
-        mOriginalTextViewHeight = mBinding.tvStartShopping.getHeight();
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            mOriginalTextViewHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+//        mOriginalTextViewHeight = mBinding.tvStartShopping.getHeight();
 
 //        mBinding.weekIngredientsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 //        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);
         mBinding.toolBar.setTitle(mWeekTitle);
+
     }
 
+    @Override
+    protected void onStart() {
+        //From changes to drag
+        mBinding.tvStartShopping.setHeight(mOriginalTextViewHeight);
+        super.onStart();
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         // Let the ScaleGestureDetector inspect all events.
-//        mScaleDetector.onTouchEvent(ev);
         int currentHeight;
+        int color;
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN: {
@@ -151,7 +166,6 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
             }
 
             case MotionEvent.ACTION_MOVE: {
-//                Log.d(TAG, "moving");
                 if (Math.abs(ev.getY()-y1) > 1) {
                     y1 = ev.getY();
                     mBinding.tvStartShopping.setHeight((int)(y1- originalY +mOriginalTextViewHeight));
@@ -159,6 +173,9 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
                     Log.d(TAG, "current height: " + currentHeight);
 //                    mBinding.tvStartShopping.setHeight()
                     Log.d(TAG, "y1: " + y1);
+                    Integer.toHexString((int)((y1-originalY)/(mScreenHeight-originalY)));
+//                    color = Color.parseColor("#"++"FFFFFF");
+//                    mBinding.tvStartShopping.setTextColor(color);
                 }
 //                mBinding.tvStartShopping.setHeight((int)(mBinding.tvStartShopping.getHeight()+ev.getY()-y1));
 //                y1 = ev.getY();
@@ -169,10 +186,25 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
                 y2 = ev.getY();
                 if (y2-originalY > 1200) {
                     Log.d(TAG, "New activity");
+                    Intent shoppingIntent = new Intent(this, ShoppingActivity.class);
+                    shoppingIntent.putExtra(Intent.EXTRA_TEXT, mWeekTitle);
+                    startActivity(shoppingIntent);
                     mBinding.tvStartShopping.setHeight(mScreenHeight);
                 }
                 else {
-                    mBinding.tvStartShopping.setHeight(mOriginalTextViewHeight);
+//                    mBinding.tvStartShopping.setHeight(mOriginalTextViewHeight);
+                    ValueAnimator anim = ValueAnimator.ofInt(mBinding.tvStartShopping.getMeasuredHeight(), mOriginalTextViewHeight);
+                    Log.d(TAG, "Original text height" + mOriginalTextViewHeight);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                            int animatedValue = (int) valueAnimator.getAnimatedValue();
+                            mBinding.tvStartShopping.setHeight(animatedValue);
+//                            mBinding.tvStartShopping.requestLayout();
+                        }
+                    });
+                    anim.setDuration(1000);
+                    anim.start();
                 }
                 Log.d(TAG, "Diff is " + (y2-y1));
                 mActivePointerId = INVALID_POINTER_ID;

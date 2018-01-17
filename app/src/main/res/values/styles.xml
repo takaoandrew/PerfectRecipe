@@ -7,6 +7,12 @@
 
     </style>
 
+    <style name="ScrollToShop" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#fff</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_gravity">center|bottom</item>
+    </style>
     <style name="RecipeCollapsed" parent="TextAppearance.AppCompat">
         <item name="android:textColor">#fff</item>
         <item name="android:textSize">18sp</item>

@@ -36,6 +36,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SortedListAdapter.Callback {
 
+    //Helps compare for sort
     private static final Comparator<WeekModel> COMPARATOR = new SortedListAdapter.ComparatorBuilder<WeekModel>()
             .setOrderForModel(WeekModel.class, new Comparator<WeekModel>() {
                 @Override
@@ -49,29 +50,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ActivityMainBinding mBinding;
     private Animator mAnimator;
     private List<WeekModel> mModels;
-
-//START
-//__________________________________________________________________________________________________
     private DatabaseReference mDatabaseReference;
     private static final String TAG = MainActivity.class.getSimpleName();
     int count = 0;
-    static final String INGREDIENTS = "ingredients";
-    static final String STEPS = "steps";
-    static final String WEEK_TITLE = "week_title";
-    static final String RECIPE_INFORMATION = "recipe_information";
-//__________________________________________________________________________________________________
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//START
-//__________________________________________________________________________________________________
-//        FirebaseApp.initializeApp(this);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
         mDatabaseReference.addValueEventListener(new ValueEventListener() {
-
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 getAllWeeks(dataSnapshot);
@@ -80,32 +67,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d(TAG, "Cancelled");
-
             }
         });
 
-//        mDatabaseReference.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                getAllWeeks(dataSnapshot);
-//            }
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                getAllWeeks(dataSnapshot);
-//            }
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-////                taskDeletion(dataSnapshot);
-//            }
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-//__________________________________________________________________________________________________
-
+        //Set the binding, and set the layout
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(mBinding.toolBar);
 
@@ -116,12 +81,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 Class destinationClass = WeekDetailActivity.class;
                 Intent intentToStartDetailActivity = new Intent(context, destinationClass);
                 intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, model.getWeekTitle());
-//                List list = new ArrayList();
-//                model.getRecipeInformation().forEach(list::add);
-//                intentToStartDetailActivity.putParcelableArrayListExtra(RECIPE_INFORMATION, (ArrayList<? extends Parcelable>) list);
 //                intentToStartDetailActivity.putExtra(INGREDIENTS, model.getIngredients());
-//                intentToStartDetailActivity.putExtra(STEPS, model.getSteps());
-//                intentToStartDetailActivity.putExtra(WEEK_TITLE, model.getWeekTitle());
                 startActivity(intentToStartDetailActivity);
             }
         });
@@ -134,40 +94,22 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mModels = new ArrayList<>();
 
     }
-//__________________________________________________________________________________________________
-
-    private void printData(DataSnapshot dataSnapshot) {
-//        Log.d(TAG, "the data snapshot is: " + dataSnapshot.toString());
-        long numChildren = dataSnapshot.getChildrenCount();
-        for (DataSnapshot child : dataSnapshot.getChildren()) {
-//            Log.d(TAG, "the child is " + child);
-
-        }
-    }
 
     private void getAllWeeks(DataSnapshot dataSnapshot){
         //waiting for all data in a single holder
         String weekCost;
         String weekTitle;
         ArrayList<String> ingredients;
-        ArrayList<String> steps;
         ArrayList<String> tags;
         mModels.clear();
         for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
             weekCost = (String) singleSnapshot.child("weekCost").getValue();
             weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
             Iterable recipeInformation = singleSnapshot.getChildren();
-//            Log.d(TAG, "Recipe Information: " + recipeInformation);
             tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
             ingredients = (ArrayList<String>) singleSnapshot.child("weekIngredients").getValue();
-//            steps = (ArrayList<String>) singleSnapshot.child("steps").getValue();
-
-//            Log.d(TAG, "the data tags are: " + dataSnapshot.child("tags").getValue());
-//            Log.d(TAG, "the type is " + dataSnapshot.child("tags").getValue().getClass());
-//            Log.d(TAG, "the data snapshot is: " + singleSnapshot.toString());
             mModels.add(new WeekModel(weekTitle, tags,
                     ingredients,
-// steps,
                     count+1,
                     weekCost, recipeInformation));
             count += 1;
@@ -177,24 +119,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .replaceAll(mModels)
                 .commit();
     }
-
-//
-//    private void taskDeletion(DataSnapshot dataSnapshot){
-//        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-//            String taskTitle = singleSnapshot.getValue(String.class);
-//            for(int i = 0; i < allTask.size(); i++){
-//                if(allTask.get(i).getTask().equals(taskTitle)){
-//                    allTask.remove(i);
-//                }
-//            }
-//            Log.d(TAG, "Task tile " + taskTitle);
-//            recyclerViewAdapter.notifyDataSetChanged();
-//            recyclerViewAdapter = new RecyclerViewAdapter(MainActivity.this, allTask);
-//            recyclerView.setAdapter(recyclerViewAdapter);
-//        }
-//    }
-//__________________________________________________________________________________________________
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -210,11 +134,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(this);
-
         return true;
     }
 
