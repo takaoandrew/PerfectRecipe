@@ -273,9 +273,9 @@ public class WeekDetailActivity extends AppCompatActivity implements SearchView.
         }
 
 
-        weekIngredients = (ArrayList<String>) weekSnapshot.child("weekIngredients").getValue();
-        mIngredientsList = weekIngredients;
-        mIngredientAdapter = new IngredientAdapter(mIngredientsList);
+//        weekIngredients = (ArrayList<String>) weekSnapshot.child("weekIngredients").getValue();
+//        mIngredientsList = weekIngredients;
+//        mIngredientAdapter = new IngredientAdapter(mIngredientsList);
 
 
 //        mBinding.weekIngredientsRecyclerview.setAdapter(mIngredientAdapter);

@@ -107,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             weekTitle = (String) singleSnapshot.child("weekTitle").getValue();
             Iterable recipeInformation = singleSnapshot.getChildren();
             tags = (ArrayList<String>) singleSnapshot.child("tags").getValue();
-            ingredients = (ArrayList<String>) singleSnapshot.child("weekIngredients").getValue();
+//            ingredients = (ArrayList<String>) singleSnapshot.child("weekIngredients").getValue();
             mModels.add(new WeekModel(weekTitle, tags,
-                    ingredients,
+//                    ingredients,
                     count+1,
                     weekCost, recipeInformation));
             count += 1;
