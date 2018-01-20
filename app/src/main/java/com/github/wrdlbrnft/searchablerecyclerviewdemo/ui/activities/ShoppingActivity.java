@@ -55,21 +55,59 @@ public class ShoppingActivity extends AppCompatActivity {
         DataSnapshot weekSnapshot = dataSnapshot.child(mWeekTitle);
         DataSnapshot groceryListSnapshot = weekSnapshot.child("weekIngredients");
         ArrayList<String> groceriesInSection;
+        TextView activeSectionList = findViewById(R.id.bakery_list);
+        TextView activeSectionLabel = findViewById(R.id.bakery_title);
         for (DataSnapshot grocerySection:groceryListSnapshot.getChildren()) {
-            if (grocerySection.getValue()!=null) {
-                groceriesInSection = (ArrayList) grocerySection.getValue();
-                if (groceriesInSection.get(0) != "") {
-                    mGroceryList.append(grocerySection.getKey());
-                    mGroceryList.append("\n");
-                    for (String grocery : groceriesInSection) {
-                        if (grocery != "" && grocery != null) {
-                            mGroceryList.append(grocery+"\n");
-                        }
-                    }
-
-                }
-                Log.d(TAG, "Value is " + grocerySection.getValue());
+            switch (grocerySection.getKey()) {
+                case "bakery":
+                    activeSectionList = findViewById(R.id.bakery_list);
+                    activeSectionLabel.setText("Bakery");
+                    activeSectionLabel = findViewById(R.id.bakery_title);
+                    break;
+                case "produce":
+                    activeSectionList = findViewById(R.id.produce_list);
+                    activeSectionLabel.setText("Produce");
+                    activeSectionLabel = findViewById(R.id.produce_title);
+                    break;
+                case "deli":
+                    activeSectionList = findViewById(R.id.deli_list);
+                    activeSectionLabel.setText("Deli");
+                    activeSectionLabel = findViewById(R.id.deli_title);
+                    break;
+                case "dryGoods":
+                    activeSectionList = findViewById(R.id.drygoods_list);
+                    activeSectionLabel.setText("Dry Goods");
+                    activeSectionLabel = findViewById(R.id.drygoods_title);
+                    break;
+                case "meat":
+                    activeSectionList = findViewById(R.id.meat_list);
+                    activeSectionLabel.setText("Meat");
+                    activeSectionLabel = findViewById(R.id.meat_title);
+                    break;
+                default:
+                    break;
             }
+            groceriesInSection = (ArrayList) grocerySection.getValue();
+            activeSectionLabel.setText(grocerySection.getKey());
+
+            for (String grocery : groceriesInSection) {
+                activeSectionList.append(grocery+"\n");
+            }
+//            if (grocerySection.getValue()!=null) {
+//                groceriesInSection = (ArrayList) grocerySection.getValue();
+//                if (groceriesInSection.get(0) != "") {
+//                    mGroceryList.append(grocerySection.getKey());
+//                    mGroceryList.append("\n");
+//                    for (String grocery : groceriesInSection) {
+//                        if (grocery.length()>=1) {
+//                            Log.d(TAG, "grocery = " +grocery);
+//                            mGroceryList.append(grocery+"\n");
+//                        }
+//                    }
+//
+//                }
+//                Log.d(TAG, "Value is " + grocerySection.getValue());
+//            }
             Log.d(TAG, grocerySection.getKey());
         }
 

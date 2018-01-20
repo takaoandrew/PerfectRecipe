@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,6 +10,61 @@
         android:id="@+id/grocery_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/bakery_title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAppearance="@style/GroceryLabel"
+        />
+    <TextView
+        android:id="@+id/bakery_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/GroceryList"/>
+    <TextView
+        android:id="@+id/produce_title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAppearance="@style/GroceryLabel"
+        />
+    <TextView
+        android:id="@+id/produce_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/GroceryList"/>
+    <TextView
+        android:id="@+id/deli_title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAppearance="@style/GroceryLabel"
+        />
+    <TextView
+        android:id="@+id/deli_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/GroceryList"/>
+    <TextView
+        android:id="@+id/drygoods_title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAppearance="@style/GroceryLabel"
+        />
+    <TextView
+        android:id="@+id/drygoods_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/GroceryList"/>
+    <TextView
+        android:id="@+id/meat_title"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAppearance="@style/GroceryLabel"
+        />
+    <TextView
+        android:id="@+id/meat_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/GroceryList"/>
 
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
