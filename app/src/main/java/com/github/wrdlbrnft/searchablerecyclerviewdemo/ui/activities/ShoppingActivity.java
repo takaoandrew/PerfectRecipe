@@ -79,6 +79,16 @@ public class ShoppingActivity extends AppCompatActivity {
                     activeSectionLabel.setText("Dry Goods");
                     activeSectionLabel = findViewById(R.id.drygoods_title);
                     break;
+                case "cannedGoods":
+                    activeSectionList = findViewById(R.id.drygoods_list);
+                    activeSectionLabel.setText("Canned Goods");
+                    activeSectionLabel = findViewById(R.id.drygoods_title);
+                    break;
+                case "dairy":
+                    activeSectionList = findViewById(R.id.drygoods_list);
+                    activeSectionLabel.setText("Dairy");
+                    activeSectionLabel = findViewById(R.id.drygoods_title);
+                    break;
                 case "meat":
                     activeSectionList = findViewById(R.id.meat_list);
                     activeSectionLabel.setText("Meat");
