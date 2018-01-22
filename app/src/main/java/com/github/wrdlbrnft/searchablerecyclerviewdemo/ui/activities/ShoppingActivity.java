@@ -51,6 +51,8 @@ public class ShoppingActivity extends AppCompatActivity {
 
     }
 
+    //No change- been working on sheets and script
+
     private void getShoppingList(DataSnapshot dataSnapshot) {
         DataSnapshot weekSnapshot = dataSnapshot.child(mWeekTitle);
         DataSnapshot groceryListSnapshot = weekSnapshot.child("weekIngredients");
