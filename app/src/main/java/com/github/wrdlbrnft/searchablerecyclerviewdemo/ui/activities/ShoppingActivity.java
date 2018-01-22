@@ -56,55 +56,79 @@ public class ShoppingActivity extends AppCompatActivity {
     private void getShoppingList(DataSnapshot dataSnapshot) {
         DataSnapshot weekSnapshot = dataSnapshot.child(mWeekTitle);
         DataSnapshot groceryListSnapshot = weekSnapshot.child("weekIngredients");
-        ArrayList<String> groceriesInSection;
+        ArrayList<String> groceryArray;
         TextView activeSectionList = findViewById(R.id.bakery_list);
         TextView activeSectionLabel = findViewById(R.id.bakery_title);
-        for (DataSnapshot grocerySection:groceryListSnapshot.getChildren()) {
-            switch (grocerySection.getKey()) {
+        String grocerySection;
+        for (DataSnapshot grocery:groceryListSnapshot.getChildren()) {
+            Log.d(TAG, "ingredientName = " + grocery.getKey());
+            Log.d(TAG, "sectionName.getValue() = " + grocery.child("sectionName").getValue());
+            groceryArray = (ArrayList) grocery.child("sectionName").getValue();
+
+            if (groceryArray == null) {
+                return;
+            }
+            else {
+                if (groceryArray.size() == 1)  {grocerySection = groceryArray.get(0).toLowerCase();}
+                else {grocerySection = "";}
+            }
+            Log.d(TAG, "grocerySection = " + grocerySection);
+
+            switch (grocerySection) {
                 case "bakery":
+                    Log.d(TAG, "MATCH: " + "bakery");
                     activeSectionList = findViewById(R.id.bakery_list);
-                    activeSectionLabel.setText("Bakery");
                     activeSectionLabel = findViewById(R.id.bakery_title);
+                    activeSectionLabel.setText("Bakery");
                     break;
                 case "produce":
+                    Log.d(TAG, "MATCH: " + "produce");
                     activeSectionList = findViewById(R.id.produce_list);
-                    activeSectionLabel.setText("Produce");
                     activeSectionLabel = findViewById(R.id.produce_title);
+                    activeSectionLabel.setText("Produce");
                     break;
                 case "deli":
+                    Log.d(TAG, "MATCH: " + "deli");
                     activeSectionList = findViewById(R.id.deli_list);
-                    activeSectionLabel.setText("Deli");
                     activeSectionLabel = findViewById(R.id.deli_title);
+                    activeSectionLabel.setText("Deli");
                     break;
-                case "dryGoods":
+                case "drygoods":
+                    Log.d(TAG, "MATCH: " + "drygoods");
                     activeSectionList = findViewById(R.id.drygoods_list);
+                    activeSectionLabel = findViewById(R.id.drygoods_title);
                     activeSectionLabel.setText("Dry Goods");
-                    activeSectionLabel = findViewById(R.id.drygoods_title);
                     break;
-                case "cannedGoods":
+                case "cannedgoods":
+                    Log.d(TAG, "MATCH: " + "cannedgoods");
                     activeSectionList = findViewById(R.id.drygoods_list);
-                    activeSectionLabel.setText("Canned Goods");
                     activeSectionLabel = findViewById(R.id.drygoods_title);
+                    activeSectionLabel.setText("Canned Goods");
                     break;
                 case "dairy":
+                    Log.d(TAG, "MATCH: " + "dairy");
                     activeSectionList = findViewById(R.id.drygoods_list);
-                    activeSectionLabel.setText("Dairy");
                     activeSectionLabel = findViewById(R.id.drygoods_title);
+                    activeSectionLabel.setText("Dairy");
                     break;
                 case "meat":
+                    Log.d(TAG, "MATCH: " + "meat");
                     activeSectionList = findViewById(R.id.meat_list);
-                    activeSectionLabel.setText("Meat");
                     activeSectionLabel = findViewById(R.id.meat_title);
+                    activeSectionLabel.setText("Meat");
                     break;
                 default:
                     break;
             }
-            groceriesInSection = (ArrayList) grocerySection.getValue();
-            activeSectionLabel.setText(grocerySection.getKey());
+            activeSectionList.append(grocery.getKey() + "\n");
+            Log.d(TAG, "Added " + grocery.getKey() + " to list: " + activeSectionList.getRootView());
+//            groceriesInSection = (ArrayList) grocerySection.getValue();
+//            activeSectionLabel.setText(grocery.child());
 
-            for (String grocery : groceriesInSection) {
-                activeSectionList.append(grocery+"\n");
-            }
+
+//            for (String grocery : groceriesInSection) {
+//                activeSectionList.append(grocery+"\n");
+//            }
 //            if (grocerySection.getValue()!=null) {
 //                groceriesInSection = (ArrayList) grocerySection.getValue();
 //                if (groceriesInSection.get(0) != "") {
@@ -120,7 +144,7 @@ public class ShoppingActivity extends AppCompatActivity {
 //                }
 //                Log.d(TAG, "Value is " + grocerySection.getValue());
 //            }
-            Log.d(TAG, grocerySection.getKey());
+//            Log.d(TAG, grocerySection.getKey());
         }
 
 
